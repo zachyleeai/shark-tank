@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum FeaturePriority {
+  P1
+  P2
+  P3
+}
+
+enum FeatureStatus {
+  IDEA
+  PLANNED
+  IN_DEV
+  SHIPPED
+}
+
+model App {
+  id        String    @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  features  Feature[]
+
+  @@unique([name])
+}
+
+model Feature {
+  id        String          @id @default(cuid())
+  appId     String
+  title     String
+  problem   String?
+  user      String?
+  value     String?
+  priority  FeaturePriority @default(P2)
+  status    FeatureStatus   @default(IDEA)
+  notes     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  app       App             @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@index([appId])
+}
