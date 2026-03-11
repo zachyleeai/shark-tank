@@ -17,7 +17,7 @@
     "db:seed": "prisma db seed"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJK\"} prisma/seed.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",
@@ -40,5 +40,10 @@
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "railway": {
+    "builder": "NIXPACKS",
+    "buildCommand": "npm run build",
+    "startCommand": "npx prisma db push && npm start"
   }
 }
