@@ -12,10 +12,20 @@ function getString(formData: FormData, key: string) {
 
 export async function createApp(formData: FormData) {
   const name = getString(formData, "name");
-  if (!name) return;
+  if (!name) redirect("/apps");
 
-  await prisma.app.create({ data: { name } });
+  try {
+    await prisma.app.create({ data: { name } });
+  } catch (e: any) {
+    // Prisma unique constraint violation
+    if (e?.code === "P2002") {
+      redirect("/apps?error=duplicate");
+    }
+    throw e;
+  }
+
   revalidatePath("/apps");
+  redirect("/apps");
 }
 
 export async function deleteApp(appId: string) {

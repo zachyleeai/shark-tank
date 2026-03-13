@@ -5,7 +5,11 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createApp, deleteApp } from "./actions";
 
-export default async function AppsPage() {
+export default async function AppsPage({
+  searchParams,
+}: {
+  searchParams?: { error?: string };
+}) {
   const apps = await prisma.app.findMany({
     orderBy: { name: "asc" },
     include: { _count: { select: { features: true } } },
@@ -45,6 +49,12 @@ export default async function AppsPage() {
           </div>
         </details>
       </div>
+
+      {searchParams?.error === "duplicate" && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          That app name already exists. Pick a different name.
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {apps.map((a) => (
