@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createApp } from "./actions";
+import { createApp, deleteApp } from "./actions";
 
 export default async function AppsPage() {
   const apps = await prisma.app.findMany({
@@ -48,23 +48,37 @@ export default async function AppsPage() {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {apps.map((a) => (
-          <Link
+          <div
             key={a.id}
-            href={`/apps/${a.id}`}
             className="group rounded-xl border border-slate-200 bg-white p-4 md:p-6 shadow-sm hover:border-slate-300 min-h-[44px]"
           >
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-start justify-between">
+              <Link href={`/apps/${a.id}`} className="flex-1">
                 <div className="text-sm font-medium text-slate-900 group-hover:underline">
                   {a.name}
                 </div>
                 <div className="mt-1 text-xs text-slate-500">
                   {a._count.features} feature{a._count.features === 1 ? "" : "s"}
                 </div>
-              </div>
-              <div className="text-xs text-slate-500">Open →</div>
+              </Link>
+              <form action={deleteApp.bind(null, a.id)}>
+                <input type="hidden" name="appId" value={a.id} />
+                <Button
+                  type="submit"
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={(e) => {
+                    if (!confirm(`Delete "${a.name}"? This cannot be undone.`)) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  Delete
+                </Button>
+              </form>
             </div>
-          </Link>
+          </div>
         ))}
 
         {!apps.length && (
