@@ -68,11 +68,6 @@ export default async function AppsPage() {
                   variant="ghost"
                   size="sm"
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  onClick={(e) => {
-                    if (!confirm(`Delete "${a.name}"? This cannot be undone.`)) {
-                      e.preventDefault();
-                    }
-                  }}
                 >
                   Delete
                 </Button>
